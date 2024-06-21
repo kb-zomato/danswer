@@ -32,6 +32,7 @@ from danswer.connectors.models import Section
 from danswer.file_processing.extract_file_text import extract_file_text
 from danswer.file_processing.html_utils import format_document_soup
 from danswer.utils.logger import setup_logger
+from danswer.utils.masking import find_and_mask_secrets
 
 logger = setup_logger()
 
@@ -432,6 +433,8 @@ class ConfluenceConnector(LoadConnector, PollConnector):
                 page_text += attachment_text
                 comments_text = self._fetch_comments(self.confluence_client, page_id)
                 page_text += comments_text
+
+                page_text = find_and_mask_secrets(page_text)
 
                 doc_batch.append(
                     Document(
